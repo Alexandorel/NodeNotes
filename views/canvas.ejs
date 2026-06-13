@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= file.name %> - NodeNotes</title>
+    <link rel="stylesheet" href="/css/canvas.css">
+</head>
+<body>
+    <div class="app">
+        <header class="top-bar">
+            <div class="left">
+                <a href="/dashboard" class="btn">&larr; My Files</a>
+                <input id="file-name" class="file-name" type="text" value="<%= file.name %>">
+            </div>
+            <div class="right">
+                <span id="edge-hint" class="edge-hint" style="display:none;"></span>
+                <span id="save-status" class="save-status">Saved</span>
+                <button id="btn-add-node">+ Node</button>
+                <button id="btn-fit">Fit</button>
+                <button id="btn-save" class="primary">Save</button>
+            </div>
+        </header>
+
+        <div id="cy"></div>
+
+        <aside id="side-panel" class="side-panel">
+            <h3>Details</h3>
+            <p class="empty">Select a node to edit its label and note.</p>
+        </aside>
+    </div>
+
+    <div id="note-modal" class="note-modal" style="display:none;">
+        <div class="note-modal-card">
+            <div class="note-modal-header">
+                <span id="note-modal-title">Edit Node</span>
+                <button id="note-modal-close" aria-label="Close">&#x2715;</button>
+            </div>
+            <label class="note-modal-label">Label</label>
+            <input id="note-modal-label-input" type="text" placeholder="Node label">
+            <label class="note-modal-label">Note</label>
+            <textarea id="note-modal-textarea" placeholder="Write a note for this node..."></textarea>
+            <div class="note-modal-footer">
+                <button id="note-modal-save">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/cytoscape@3.30.2/dist/cytoscape.min.js"></script>
+    <script>
+        window.__FILE_ID__ = "<%= file._id %>";
+    </script>
+    <script src="/js/canvas.js"></script>
+</body>
+</html>
