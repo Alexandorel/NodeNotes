@@ -5,6 +5,7 @@ const session = require('express-session');
 const path = require('path');
 
 const { connect } = require('./db');
+const passport = require('./config/passport');
 
 const app = express();
 
@@ -21,6 +22,9 @@ app.use(session({
     saveUninitialized: false,
     cookie: { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 }
 }));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use((req, res, next) => {
     res.locals.currentUser = req.session.email || null;
