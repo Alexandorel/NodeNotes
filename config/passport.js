@@ -1,5 +1,37 @@
 const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../db/users');
+
+// Google login strategy
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: '/auth/google/callback'
+}, async (accessToken, refreshToken, profile, done) => {
+    try {
+        const email = (profile.emails && profile.emails[0] && profile.emails[0].value || '').toLowerCase();
+
+        // 1. user already linked to this Google account
+        let user = await User.findOne({ googleId: profile.id });
+        if (user) return done(null, user);
+
+        // 2. an account with the same email exists -> link the Google id to it
+        if (email) {
+            user = await User.findOne({ email });
+            if (user) {
+                user.googleId = profile.id;
+                await user.save();
+                return done(null, user);
+            }
+        }
+
+        // 3. brand new user created from the Google profile (no local password)
+        user = await User.create({ email, googleId: profile.id });
+        return done(null, user);
+    } catch (err) {
+        return done(err);
+    }
+}));
 
 // when the user is loggin in, the id is saved in session
 passport.serializeUser((user, done) => {
