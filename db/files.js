@@ -8,7 +8,8 @@ const nodeSchema = new mongoose.Schema({
     y: { type: Number, default: 0 },
     w: { type: Number, default: 80 },
     h: { type: Number, default: 80 },
-    fontSize: { type: Number, default: 13 }
+    fontSize: { type: Number, default: 13 },
+    color: { type: String, default: '' }
 }, { _id: false });
 
 const edgeSchema = new mongoose.Schema({

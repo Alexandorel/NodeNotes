@@ -302,3 +302,40 @@ html, body {
     border-radius: 3px;
     line-height: 1.5;
 }
+
+/* Color swatches */
+.color-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.swatch {
+    width: 28px;
+    height: 28px;
+    border: 2px solid #000;
+    border-radius: 3px;
+    cursor: pointer;
+    padding: 0;
+    box-sizing: border-box;
+    transition: transform 0.1s;
+}
+
+.swatch:hover {
+    transform: scale(1.1);
+}
+
+.swatch.active {
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+}
+
+.swatch-reset {
+    background: #fff;
+    color: #000;
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

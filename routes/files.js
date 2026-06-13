@@ -89,7 +89,8 @@ router.put('/api/files/:id', requireLogin, async (req, res, next) => {
                 y: Number(n.y) || 0,
                 w: Number(n.w) || 80,
                 h: Number(n.h) || 80,
-                fontSize: Number(n.fontSize) || 13
+                fontSize: Number(n.fontSize) || 13,
+                color: String(n.color || '')
             }));
         }
         if (Array.isArray(edges)) {

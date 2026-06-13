@@ -13,6 +13,7 @@
     let resizeEls = [];
     let resizingData = null;
     let activeNoteNode = null;
+    let activeNoteColor = '';
 
     function computeFontSize(w, h) {
         return Math.max(8, Math.round(Math.min(w, h) / 6));
@@ -21,6 +22,14 @@
     function nextId(prefix) {
         return prefix + '_' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
     }
+
+    const NODE_COLORS = [
+        { name: 'Principal', value: '#8b5cf6' },
+        { name: 'Secundar', value: '#3b82f6' },
+        { name: 'Important', value: '#ef4444' },
+        { name: 'Idee', value: '#22c55e' },
+        { name: 'De revazut', value: '#f59e0b' }
+    ];
 
     if (typeof cytoscape === 'undefined') {
         saveStatus.textContent = 'Cytoscape failed to load';
@@ -51,6 +60,7 @@
             },
             { selector: 'node:selected', style: { 'border-width': 2, 'border-color': '#000' } },
             { selector: 'node[hasNote = "true"]', style: { 'background-color': '#fffde7', 'border-color': '#000' } },
+            { selector: 'node[color]', style: { 'background-color': 'data(color)' } },
             { selector: 'node.edge-source', style: { 'border-color': '#000', 'border-width': 4, 'border-style': 'dashed' } },
             {
                 selector: 'edge',
@@ -159,11 +169,11 @@
 
     function loadGraph(data) {
         fileNameInput.value = data.name || '';
-        const nodes = (data.nodes || []).map(n => ({
-            group: 'nodes',
-            data: { id: n.nodeId, label: n.label, note: n.note || '', hasNote: n.note ? 'true' : 'false', w: n.w || 80, h: n.h || 80, fontSize: n.fontSize || computeFontSize(n.w || 80, n.h || 80) },
-            position: { x: n.x || 0, y: n.y || 0 }
-        }));
+        const nodes = (data.nodes || []).map(n => {
+            const d = { id: n.nodeId, label: n.label, note: n.note || '', hasNote: n.note ? 'true' : 'false', w: n.w || 80, h: n.h || 80, fontSize: n.fontSize || computeFontSize(n.w || 80, n.h || 80) };
+            if (n.color) d.color = n.color;
+            return { group: 'nodes', data: d, position: { x: n.x || 0, y: n.y || 0 } };
+        });
         const edges = (data.edges || []).map(e => ({
             group: 'edges',
             data: { id: e.edgeId, edgeId: e.edgeId, source: e.source, target: e.target }
@@ -191,7 +201,8 @@
                 y: n.position('y'),
                 w: n.data('w') || 80,
                 h: n.data('h') || 80,
-                fontSize: n.data('fontSize') || computeFontSize(n.data('w') || 80, n.data('h') || 80)
+                fontSize: n.data('fontSize') || computeFontSize(n.data('w') || 80, n.data('h') || 80),
+                color: n.data('color') || ''
             })),
             edges: cy.edges().map(e => ({
                 edgeId: e.id(),
@@ -316,10 +327,28 @@
     function escapeText(s) { return String(s).replace(/</g, '&lt;'); }
 
     // ── Note modal ────────────────────────────────────────────────
+    function renderModalSwatches() {
+        const container = document.getElementById('note-modal-colors');
+        const swatches = NODE_COLORS.map(c =>
+            `<button type="button" class="swatch${activeNoteColor === c.value ? ' active' : ''}" style="background:${c.value}" data-color="${c.value}" title="${c.name}"></button>`
+        ).join('');
+        container.innerHTML =
+            `<button type="button" class="swatch swatch-reset${activeNoteColor === '' ? ' active' : ''}" data-color="" title="No color">&times;</button>` +
+            swatches;
+        container.querySelectorAll('.swatch').forEach(btn => {
+            btn.addEventListener('click', () => {
+                activeNoteColor = btn.getAttribute('data-color');
+                renderModalSwatches();
+            });
+        });
+    }
+
     function openNoteModal(node) {
         activeNoteNode = node;
+        activeNoteColor = node.data('color') || '';
         document.getElementById('note-modal-label-input').value = node.data('label') || '';
         document.getElementById('note-modal-textarea').value = node.data('note') || '';
+        renderModalSwatches();
         document.getElementById('note-modal').style.display = 'flex';
         setTimeout(() => document.getElementById('note-modal-label-input').focus(), 50);
     }
@@ -336,6 +365,8 @@
         if (label.trim()) activeNoteNode.data('label', label);
         activeNoteNode.data('note', note);
         activeNoteNode.data('hasNote', note ? 'true' : 'false');
+        if (activeNoteColor) activeNoteNode.data('color', activeNoteColor);
+        else activeNoteNode.removeData('color');
         markDirty();
         closeNoteModal();
     }
