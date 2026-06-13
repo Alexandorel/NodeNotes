@@ -17,11 +17,18 @@ const edgeSchema = new mongoose.Schema({
     target: { type: String, required: true }
 }, { _id: false });
 
+const viewSchema = new mongoose.Schema({
+    zoom: { type: Number, default: 1 },
+    panX: { type: Number, default: 0 },
+    panY: { type: Number, default: 0 }
+}, { _id: false });
+
 const fileSchema = new mongoose.Schema({
     ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     name: { type: String, required: true, trim: true, default: 'Untitled file' },
     nodes: { type: [nodeSchema], default: [] },
-    edges: { type: [edgeSchema], default: [] }
+    edges: { type: [edgeSchema], default: [] },
+    view: { type: viewSchema, default: null }
 }, { timestamps: true });
 
 module.exports = mongoose.model('GraphFile', fileSchema);

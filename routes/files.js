@@ -59,7 +59,8 @@ router.get('/api/files/:id', requireLogin, async (req, res, next) => {
             _id: file._id,
             name: file.name,
             nodes: file.nodes,
-            edges: file.edges
+            edges: file.edges,
+            view: file.view
         });
     } catch (err) {
         next(err);
@@ -69,9 +70,16 @@ router.get('/api/files/:id', requireLogin, async (req, res, next) => {
 router.put('/api/files/:id', requireLogin, async (req, res, next) => {
     try {
         if (!isValidId(req.params.id)) return res.status(404).json({ error: 'not found' });
-        const { name, nodes, edges } = req.body;
+        const { name, nodes, edges, view } = req.body;
         const update = {};
         if (typeof name === 'string') update.name = name.trim() || 'Untitled file';
+        if (view && typeof view === 'object') {
+            update.view = {
+                zoom: Number(view.zoom) || 1,
+                panX: Number(view.panX) || 0,
+                panY: Number(view.panY) || 0
+            };
+        }
         if (Array.isArray(nodes)) {
             update.nodes = nodes.map(n => ({
                 nodeId: String(n.nodeId),

@@ -8,6 +8,7 @@
 
     let saveTimer = null;
     let dirty = false;
+    let loaded = false;
     let pendingEdgeSource = null;
     let resizeEls = [];
     let resizingData = null;
@@ -169,8 +170,14 @@
         }));
         cy.elements().remove();
         cy.add([...nodes, ...edges]);
-        if (nodes.length > 0) cy.fit(undefined, 50);
+        if (data.view && typeof data.view.zoom === 'number') {
+            cy.zoom(data.view.zoom);
+            cy.pan({ x: data.view.panX || 0, y: data.view.panY || 0 });
+        } else if (nodes.length > 0) {
+            cy.fit(undefined, 50);
+        }
         renderSidePanel();
+        loaded = true;
     }
 
     function serializeGraph() {
@@ -190,7 +197,12 @@
                 edgeId: e.id(),
                 source: e.data('source'),
                 target: e.data('target')
-            }))
+            })),
+            view: {
+                zoom: cy.zoom(),
+                panX: cy.pan().x,
+                panY: cy.pan().y
+            }
         };
     }
 
@@ -362,6 +374,7 @@
         const sel = cy.$('node:selected');
         if (sel.length === 1) placeResizeHandles(sel[0]);
         else removeResizeEls();
+        if (loaded) markDirty();
     });
 
     cy.on('drag', 'node', (evt) => {
