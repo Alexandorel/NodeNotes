@@ -1,5 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
+const passport = require('../config/passport');
 const User = require('../db/users');
 
 const router = express.Router();
@@ -93,6 +94,22 @@ router.post('/register', async (req, res, next) => {
         next(err);
     }
 });
+
+// Pasul 1: redirectioneaza userul catre Google pentru autentificare
+router.get('/auth/google', passport.authenticate('google', {
+    scope: ['profile', 'email']
+}));
+
+// Pasul 2: Google il trimite inapoi aici dupa ce a aprobat accesul
+router.get('/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/login' }),
+    (req, res) => {
+        // pastram aceeasi conventie ca la login-ul clasic
+        req.session.userId = req.user._id.toString();
+        req.session.email = req.user.email;
+        res.redirect('/dashboard');
+    }
+);
 
 router.post('/logout', (req, res) => {
     req.session.destroy(() => res.redirect('/login'));
