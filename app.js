@@ -23,7 +23,7 @@ app.use(session({
 }));
 
 app.use((req, res, next) => {
-    res.locals.currentUser = req.session.username || null;
+    res.locals.currentUser = req.session.email || null;
     next();
 });
 

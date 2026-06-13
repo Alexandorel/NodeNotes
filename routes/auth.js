@@ -4,6 +4,8 @@ const User = require('../db/users');
 
 const router = express.Router();
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 router.get('/login', (req, res) => {
     if (req.session.userId) return res.redirect('/dashboard');
     res.render('login', { title: 'Autentificare - NodeNotes', error: null });
@@ -11,21 +13,21 @@ router.get('/login', (req, res) => {
 
 router.post('/login', async (req, res, next) => {
     try {
-        const username = String(req.body.username || '').trim();
+        const email = String(req.body.email || '').trim().toLowerCase();
         const password = String(req.body.password || '');
 
-        if (!username || !password) {
+        if (!email || !password) {
             return res.status(400).render('login', {
                 title: 'Autentificare - NodeNotes',
-                error: 'Username si parola sunt obligatorii'
+                error: 'Email si parola sunt obligatorii'
             });
         }
 
-        const user = await User.findOne({ username });
+        const user = await User.findOne({ email });
         if (!user) {
             return res.status(401).render('login', {
                 title: 'Autentificare - NodeNotes',
-                error: 'Username sau parola incorecte'
+                error: 'Email sau parola incorecte'
             });
         }
 
@@ -33,12 +35,12 @@ router.post('/login', async (req, res, next) => {
         if (!corect) {
             return res.status(401).render('login', {
                 title: 'Autentificare - NodeNotes',
-                error: 'Username sau parola incorecte'
+                error: 'Email sau parola incorecte'
             });
         }
 
         req.session.userId = user._id.toString();
-        req.session.username = user.username;
+        req.session.email = user.email;
         res.redirect('/dashboard');
     } catch (err) {
         next(err);
@@ -52,13 +54,19 @@ router.get('/register', (req, res) => {
 
 router.post('/register', async (req, res, next) => {
     try {
-        const username = String(req.body.username || '').trim();
+        const email = String(req.body.email || '').trim().toLowerCase();
         const password = String(req.body.password || '');
 
-        if (!username || !password) {
+        if (!email || !password) {
             return res.status(400).render('register', {
                 title: 'Inregistrare - NodeNotes',
-                error: 'Username si parola sunt obligatorii'
+                error: 'Email si parola sunt obligatorii'
+            });
+        }
+        if (!EMAIL_RE.test(email)) {
+            return res.status(400).render('register', {
+                title: 'Inregistrare - NodeNotes',
+                error: 'Adresa de email nu este valida'
             });
         }
         if (password.length < 6) {
@@ -67,19 +75,19 @@ router.post('/register', async (req, res, next) => {
                 error: 'Parola trebuie sa aiba cel putin 6 caractere'
             });
         }
-        const existing = await User.findOne({ username });
+        const existing = await User.findOne({ email });
         if (existing) {
             return res.status(400).render('register', {
                 title: 'Inregistrare - NodeNotes',
-                error: 'Username deja folosit'
+                error: 'Email deja folosit'
             });
         }
 
         const passwordHash = await bcrypt.hash(password, 10);
-        const user = await User.create({ username, passwordHash });
+        const user = await User.create({ email, passwordHash });
 
         req.session.userId = user._id.toString();
-        req.session.username = user.username;
+        req.session.email = user.email;
         res.redirect('/dashboard');
     } catch (err) {
         next(err);
