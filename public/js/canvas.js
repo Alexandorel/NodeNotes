@@ -165,7 +165,7 @@
         pendingEdgeSource = node;
         node.addClass('edge-source');
         edgeHint.style.display = 'inline';
-        edgeHint.textContent = 'Shift+click another node to connect (Esc to cancel)';
+        edgeHint.textContent = 'Click another node to connect (Esc to cancel)';
     }
 
     function loadGraph(data) {
@@ -303,13 +303,16 @@
             placeResizeHandles(el);
             sidePanel.innerHTML = `
                 <h3>Node selected</h3>
-                <small>ID: ${el.id()}</small>
                 <label>Label</label>
                 <input id="node-label" type="text" value="${escapeAttr(el.data('label') || '')}">
+                <button id="connect-node" style="background:#000;color:#fff;border:2px solid #000;padding:8px;border-radius:3px;cursor:pointer;margin-top:8px;font-weight:600;width:100%;">Connect to another node</button>
                 <button id="del-node" style="background:transparent;color:#dc3545;border:1.5px solid #dc3545;padding:8px;border-radius:3px;cursor:pointer;margin-top:8px;font-weight:600;width:100%;">Delete node</button>`;
             document.getElementById('node-label').addEventListener('input', (e) => {
                 el.data('label', e.target.value);
                 markDirty();
+            });
+            document.getElementById('connect-node').addEventListener('click', () => {
+                setEdgeSource(el);
             });
             document.getElementById('del-node').addEventListener('click', () => {
                 el.remove();
@@ -401,14 +404,17 @@
             return;
         }
         if (evt.target.isNode && evt.target.isNode()) {
+            // A connection is being created: this tap picks the target node
+            if (pendingEdgeSource) {
+                if (!pendingEdgeSource.same(evt.target)) {
+                    connectNodes(pendingEdgeSource, evt.target);
+                }
+                clearEdgeSource();
+                return;
+            }
             const shift = evt.originalEvent && evt.originalEvent.shiftKey;
             if (shift) {
-                if (!pendingEdgeSource) {
-                    setEdgeSource(evt.target);
-                } else {
-                    connectNodes(pendingEdgeSource, evt.target);
-                    clearEdgeSource();
-                }
+                setEdgeSource(evt.target);
             }
             // single tap (no shift): just selects the node;
             // double-click opens the editor (see dbltap below)
