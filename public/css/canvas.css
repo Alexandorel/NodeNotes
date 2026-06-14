@@ -306,36 +306,68 @@ html, body {
 /* Color swatches */
 .color-swatches {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    flex-direction: column;
+    gap: 6px;
     margin-top: 4px;
 }
 
-.swatch {
-    width: 28px;
-    height: 28px;
+.swatch-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 6px 8px;
+    background: #fff;
+    border: 1.5px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: left;
+    box-sizing: border-box;
+    transition: border-color 0.1s, background 0.1s;
+}
+
+.swatch-row:hover {
+    border-color: #999;
+    background: #fafafa;
+}
+
+.swatch-row.active {
+    border-color: #000;
+    box-shadow: 0 0 0 1px #000;
+}
+
+.swatch-dot {
+    width: 22px;
+    height: 22px;
     border: 2px solid #000;
     border-radius: 3px;
-    cursor: pointer;
-    padding: 0;
+    flex-shrink: 0;
     box-sizing: border-box;
-    transition: transform 0.1s;
 }
 
-.swatch:hover {
-    transform: scale(1.1);
-}
-
-.swatch.active {
-    box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
-}
-
-.swatch-reset {
+.swatch-dot-reset {
     background: #fff;
     color: #000;
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.swatch-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.swatch-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #111;
+}
+
+.swatch-desc {
+    font-size: 0.78rem;
+    color: #777;
 }

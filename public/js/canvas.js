@@ -23,12 +23,13 @@
         return prefix + '_' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
     }
 
+    // Ordered from most to least important information
     const NODE_COLORS = [
-        { name: 'Principal', value: '#8b5cf6' },
-        { name: 'Secundar', value: '#3b82f6' },
-        { name: 'Important', value: '#ef4444' },
-        { name: 'Idee', value: '#22c55e' },
-        { name: 'De revazut', value: '#f59e0b' }
+        { name: 'Main', desc: 'core / key information', value: '#ef4444' },
+        { name: 'Secondary', desc: 'supporting information', value: '#f59e0b' },
+        { name: 'Detail', desc: 'minor details', value: '#8b5cf6' },
+        { name: 'Reference', desc: 'sources & links', value: '#3b82f6' },
+        { name: 'Side note', desc: 'extra thoughts', value: '#22c55e' }
     ];
 
     if (typeof cytoscape === 'undefined') {
@@ -330,12 +331,21 @@
     function renderModalSwatches() {
         const container = document.getElementById('note-modal-colors');
         const swatches = NODE_COLORS.map(c =>
-            `<button type="button" class="swatch${activeNoteColor === c.value ? ' active' : ''}" style="background:${c.value}" data-color="${c.value}" title="${c.name}"></button>`
+            `<button type="button" class="swatch-row${activeNoteColor === c.value ? ' active' : ''}" data-color="${c.value}">
+                <span class="swatch-dot" style="background:${c.value}"></span>
+                <span class="swatch-text">
+                    <span class="swatch-name">${c.name}</span>
+                    <span class="swatch-desc">${c.desc}</span>
+                </span>
+            </button>`
         ).join('');
         container.innerHTML =
-            `<button type="button" class="swatch swatch-reset${activeNoteColor === '' ? ' active' : ''}" data-color="" title="No color">&times;</button>` +
+            `<button type="button" class="swatch-row swatch-reset${activeNoteColor === '' ? ' active' : ''}" data-color="">
+                <span class="swatch-dot swatch-dot-reset">&times;</span>
+                <span class="swatch-text"><span class="swatch-name">No color</span></span>
+            </button>` +
             swatches;
-        container.querySelectorAll('.swatch').forEach(btn => {
+        container.querySelectorAll('.swatch-row').forEach(btn => {
             btn.addEventListener('click', () => {
                 activeNoteColor = btn.getAttribute('data-color');
                 renderModalSwatches();
