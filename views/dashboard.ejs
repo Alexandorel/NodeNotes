@@ -227,7 +227,7 @@
             NodeNotes
         </span>
         <div class="d-flex align-items-center gap-3">
-            <span style="color:#ccc; font-size:0.9rem;">Hello, <strong style="color:#fff"><%= currentUser %></strong></span>
+            <span style="color:#ccc; font-size:0.9rem;">Hello, <strong style="color:#fff"><%= currentUser ? currentUser.split('@')[0] : '' %></strong></span>
             <form action="/logout" method="POST" class="m-0">
                 <button class="btn-logout" type="submit">Log Out</button>
             </form>
