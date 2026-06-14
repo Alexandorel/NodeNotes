@@ -188,6 +188,8 @@ html, body {
     align-items: center;
     justify-content: center;
     z-index: 200;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .note-modal-card {
@@ -195,7 +197,9 @@ html, body {
     border: 2px solid #000;
     border-radius: 4px;
     width: 500px;
-    max-width: 90vw;
+    max-width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 14px;
@@ -370,4 +374,66 @@ html, body {
 .swatch-desc {
     font-size: 0.78rem;
     color: #777;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 768px) {
+    html, body {
+        /* allow vertical scroll on small screens */
+        overflow: auto;
+    }
+
+    /* Stack layout: top bar, then canvas, then side panel below */
+    .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 60vh auto;
+        grid-template-areas:
+            "top"
+            "canvas"
+            "side";
+        height: auto;
+        min-height: 100vh;
+    }
+
+    /* Top bar wraps and its controls become full-width-friendly */
+    .top-bar {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px 12px;
+    }
+    .top-bar .left,
+    .top-bar .right {
+        flex-wrap: wrap;
+    }
+    .top-bar .left {
+        flex: 1 1 100%;
+    }
+    .top-bar input.file-name {
+        flex: 1 1 auto;
+        width: auto;
+        min-width: 0;
+    }
+    .top-bar .right {
+        flex: 1 1 100%;
+        justify-content: flex-end;
+    }
+
+    /* Canvas keeps its own height; border moves to the bottom */
+    #cy {
+        border-right: none;
+        border-bottom: 2px solid #000;
+    }
+
+    /* Side panel sits under the canvas with a capped, scrollable height */
+    .side-panel {
+        max-height: 45vh;
+    }
+
+    /* Tighter padding + shorter note field on small screens */
+    .note-modal-card {
+        padding: 18px;
+    }
+    .note-modal-card textarea {
+        min-height: 140px;
+    }
 }

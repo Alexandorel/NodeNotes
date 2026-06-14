@@ -282,7 +282,7 @@
                     - Double-click on canvas: new node<br>
                     - <em>+ Node</em> button: new node at center<br>
                     - <strong>Shift+click</strong> a node, then another: connect<br>
-                    - Double-click a node: quick rename<br>
+                    - Double-click a node: open it (label, note, color)<br>
                     - Select + <em>Delete</em> key: remove<br>
                     - Drag a corner handle to resize<br>
                     - Scroll: zoom &nbsp;/&nbsp; drag background: pan<br>
@@ -403,9 +403,9 @@
                     connectNodes(pendingEdgeSource, evt.target);
                     clearEdgeSource();
                 }
-            } else {
-                openNoteModal(evt.target);
             }
+            // single tap (no shift): just selects the node;
+            // double-click opens the editor (see dbltap below)
         }
     });
 
@@ -426,13 +426,7 @@
         if (evt.target === cy) {
             addNodeAt(evt.position);
         } else if (evt.target.isNode && evt.target.isNode()) {
-            const node = evt.target;
-            const newLabel = prompt('Rename node:', node.data('label') || '');
-            if (newLabel !== null) {
-                node.data('label', newLabel);
-                markDirty();
-                renderSidePanel();
-            }
+            openNoteModal(evt.target);
         }
     });
 
