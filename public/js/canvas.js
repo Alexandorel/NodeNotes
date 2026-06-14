@@ -305,10 +305,16 @@
                 <h3>Node selected</h3>
                 <small>ID: ${el.id()}</small>
                 <label>Label</label>
-                <input id="node-label" type="text" value="${escapeAttr(el.data('label') || '')}">`;
+                <input id="node-label" type="text" value="${escapeAttr(el.data('label') || '')}">
+                <button id="del-node" style="background:transparent;color:#dc3545;border:1.5px solid #dc3545;padding:8px;border-radius:3px;cursor:pointer;margin-top:8px;font-weight:600;width:100%;">Delete node</button>`;
             document.getElementById('node-label').addEventListener('input', (e) => {
                 el.data('label', e.target.value);
                 markDirty();
+            });
+            document.getElementById('del-node').addEventListener('click', () => {
+                el.remove();
+                markDirty();
+                renderSidePanel();
             });
         } else {
             removeResizeEls();
