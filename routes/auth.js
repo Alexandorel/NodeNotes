@@ -97,7 +97,8 @@ router.post('/register', async (req, res, next) => {
 
 // Pasul 1: redirectioneaza userul catre Google pentru autentificare
 router.get('/auth/google', passport.authenticate('google', {
-    scope: ['profile', 'email']
+    scope: ['profile', 'email'],
+    prompt: 'select_account'
 }));
 
 // Pasul 2: Google il trimite inapoi aici dupa ce a aprobat accesul
