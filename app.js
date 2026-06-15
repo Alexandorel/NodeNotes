@@ -33,7 +33,7 @@ app.use((req, res, next) => {
 
 app.get('/', (req, res) => {
     if (req.session.userId) return res.redirect('/dashboard');
-    res.redirect('/login');
+    res.render('home');
 });
 
 app.use('/', require('./routes/auth'));
