@@ -113,9 +113,13 @@
             cyEl.appendChild(h);
             resizeEls.push(h);
 
-            h.addEventListener('mousedown', (e) => {
+            h.addEventListener('pointerdown', (e) => {
                 e.stopPropagation();
                 e.preventDefault();
+                // Touch pointers get implicit capture on the handle, but the
+                // handle is recreated on every move; release it so the
+                // document-level pointermove keeps firing.
+                if (h.hasPointerCapture(e.pointerId)) h.releasePointerCapture(e.pointerId);
                 resizingData = {
                     node, id,
                     startX: e.clientX,
@@ -127,8 +131,9 @@
         });
     }
 
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener('pointermove', (e) => {
         if (!resizingData) return;
+        e.preventDefault(); // stop the page from scrolling/panning while resizing
         const { node, id, startX, startY, startW, startH } = resizingData;
         const zoom = cy.zoom();
         const dx = (e.clientX - startX) / zoom;
@@ -144,9 +149,12 @@
         node.data('fontSize', computeFontSize(newW, newH));
         placeResizeHandles(node);
         markDirty();
-    });
+    }, { passive: false });
 
-    document.addEventListener('mouseup', () => {
+    document.addEventListener('pointerup', () => {
+        resizingData = null;
+    });
+    document.addEventListener('pointercancel', () => {
         resizingData = null;
     });
 

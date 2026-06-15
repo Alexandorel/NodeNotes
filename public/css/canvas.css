@@ -124,6 +124,13 @@ html, body {
     border: 2px solid #000;
     box-sizing: border-box;
     z-index: 10;
+    touch-action: none;
+}
+/* Larger invisible tap target for touch, without changing the visual size */
+.resize-handle::before {
+    content: '';
+    position: absolute;
+    inset: -10px;
 }
 .resize-nw { cursor: nw-resize; }
 .resize-ne { cursor: ne-resize; }
