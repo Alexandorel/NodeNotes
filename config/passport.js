@@ -14,11 +14,11 @@ passport.use(new GoogleStrategy({
     try {
         const email = (profile.emails && profile.emails[0] && profile.emails[0].value || '').toLowerCase();
 
-        // 1. user already linked to this Google account
+        // user already linked to this Google account
         let user = await User.findOne({ googleId: profile.id });
         if (user) return done(null, user);
 
-        // 2. an account with the same email exists -> link the Google id to it
+        // an account with the same email exists -> link the Google id to it
         if (email) {
             user = await User.findOne({ email });
             if (user) {
