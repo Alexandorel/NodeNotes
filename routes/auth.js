@@ -41,7 +41,7 @@ router.get('/login', (req, res) => {
     res.render('login', { title: 'Autentificare - NodeNotes', error: null });
 });
 
-router.post('/login', async (req, res, next) => {
+router.post('/login', authLimiter, async (req, res, next) => {
     try {
         const email = String(req.body.email || '').trim().toLowerCase();
         const password = String(req.body.password || '');
@@ -81,7 +81,7 @@ router.get('/register', (req, res) => {
     res.render('register', { title: 'Inregistrare - NodeNotes', error: null });
 });
 
-router.post('/register', async (req, res, next) => {
+router.post('/register', authLimiter, async (req, res, next) => {
     try {
         const email = String(req.body.email || '').trim().toLowerCase();
         const password = String(req.body.password || '');
