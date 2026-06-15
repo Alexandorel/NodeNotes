@@ -7,6 +7,17 @@ const router = express.Router();
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+function establishSession(req, user) {
+    return new Promise((resolve, reject) => {
+        req.session.regenerate((err) => {
+            if (err) return reject(err);
+            req.session.userId = user._id.toString();
+            req.session.email = user.email;
+            req.session.save((saveErr) => (saveErr ? reject(saveErr) : resolve()));
+        });
+    });
+}
+
 router.get('/login', (req, res) => {
     if (req.session.userId) return res.redirect('/dashboard');
     res.render('login', { title: 'Autentificare - NodeNotes', error: null });
@@ -40,8 +51,7 @@ router.post('/login', async (req, res, next) => {
             });
         }
 
-        req.session.userId = user._id.toString();
-        req.session.email = user.email;
+        await establishSession(req, user);
         res.redirect('/dashboard');
     } catch (err) {
         next(err);
@@ -87,8 +97,7 @@ router.post('/register', async (req, res, next) => {
         const passwordHash = await bcrypt.hash(password, 10);
         const user = await User.create({ email, passwordHash });
 
-        req.session.userId = user._id.toString();
-        req.session.email = user.email;
+        await establishSession(req, user);
         res.redirect('/dashboard');
     } catch (err) {
         next(err);
@@ -103,10 +112,13 @@ router.get('/auth/google', passport.authenticate('google', {
 
 router.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
-    (req, res) => {
-        req.session.userId = req.user._id.toString();
-        req.session.email = req.user.email;
-        res.redirect('/dashboard');
+    async (req, res, next) => {
+        try {
+            await establishSession(req, req.user);
+            res.redirect('/dashboard');
+        } catch (err) {
+            next(err);
+        }
     }
 );
 
