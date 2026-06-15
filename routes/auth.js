@@ -95,17 +95,15 @@ router.post('/register', async (req, res, next) => {
     }
 });
 
-// Pasul 1: redirectioneaza userul catre Google pentru autentificare
+// google login routes
 router.get('/auth/google', passport.authenticate('google', {
     scope: ['profile', 'email'],
     prompt: 'select_account'
 }));
 
-// Pasul 2: Google il trimite inapoi aici dupa ce a aprobat accesul
 router.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
     (req, res) => {
-        // pastram aceeasi conventie ca la login-ul clasic
         req.session.userId = req.user._id.toString();
         req.session.email = req.user.email;
         res.redirect('/dashboard');
