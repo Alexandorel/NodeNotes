@@ -1,11 +1,29 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
+const rateLimit = require('express-rate-limit');
 const passport = require('../config/passport');
 const User = require('../db/users');
 
 const router = express.Router();
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes window between tries
+    limit: 10,                // max 10 tries per ip
+    standardHeaders: true,
+    legacyHeaders: false,
+    handler: (req, res) => {
+        const view = req.path.includes('register') ? 'register' : 'login';
+        const title = view === 'register'
+            ? 'Inregistrare - NodeNotes'
+            : 'Autentificare - NodeNotes';
+        res.status(429).render(view, {
+            title,
+            error: 'Prea multe incercari. Reincearca peste cateva minute.'
+        });
+    }
+});
 
 function establishSession(req, user) {
     return new Promise((resolve, reject) => {
