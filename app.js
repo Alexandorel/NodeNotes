@@ -10,6 +10,14 @@ const passport = require('./config/passport');
 
 const app = express();
 
+const isProduction = process.env.NODE_ENV === 'production';
+
+// In production SESSION_SECRET is a must, but for locally it works on a fallback of dev
+const SESSION_SECRET = process.env.SESSION_SECRET || (isProduction ? null : 'dev-secret');
+if (!SESSION_SECRET) {
+    console.error('SESSION_SECRET lipseste. Seteaza-l ca variabila de mediu in productie.');
+    process.exit(1);
+}
 
 app.set('trust proxy', 1);
 
@@ -22,7 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
     name: 'nn.sid', // cookie name
-    secret: process.env.SESSION_SECRET || 'dev-secret',
+    secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
@@ -31,7 +39,7 @@ app.use(session({
     }),
     cookie: {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: isProduction,
         sameSite: 'lax',
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
