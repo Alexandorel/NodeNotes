@@ -63,6 +63,9 @@ app.use('/', require('./routes/files'));
 
 app.use((err, req, res, next) => {
     console.error(err);
+    if (isProduction) {
+        return res.status(500).send('Eroare interna');
+    }
     res.status(500).send('Eroare interna: ' + err.message);
 });
 
