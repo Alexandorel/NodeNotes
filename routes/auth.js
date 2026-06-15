@@ -123,7 +123,10 @@ router.get('/auth/google/callback',
 );
 
 router.post('/logout', (req, res) => {
-    req.session.destroy(() => res.redirect('/login'));
+    req.session.destroy(() => {
+        res.clearCookie('nn.sid');
+        res.redirect('/login');
+    });
 });
 
 module.exports = router;
