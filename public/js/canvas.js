@@ -344,6 +344,32 @@
     function escapeAttr(s) { return String(s).replace(/"/g, '&quot;'); }
     function escapeText(s) { return String(s).replace(/</g, '&lt;'); }
 
+    function renderMarkdown(text) {
+        if (typeof marked === 'undefined' || typeof DOMPurify === 'undefined') {
+            // Libs failed to load: fall back to safe plain text
+            return escapeText(text || '').replace(/\n/g, '<br>');
+        }
+        const html = marked.parse(text || '', { breaks: true });
+        return DOMPurify.sanitize(html);
+    }
+
+    function setNoteTab(tab) {
+        const textarea = document.getElementById('note-modal-textarea');
+        const preview = document.getElementById('note-modal-preview');
+        const tabWrite = document.getElementById('md-tab-write');
+        const tabPreview = document.getElementById('md-tab-preview');
+        const showPreview = tab === 'preview';
+
+        if (showPreview) preview.innerHTML = renderMarkdown(textarea.value);
+        textarea.style.display = showPreview ? 'none' : '';
+        preview.style.display = showPreview ? '' : 'none';
+        tabWrite.classList.toggle('active', !showPreview);
+        tabPreview.classList.toggle('active', showPreview);
+    }
+
+    document.getElementById('md-tab-write').addEventListener('click', () => setNoteTab('write'));
+    document.getElementById('md-tab-preview').addEventListener('click', () => setNoteTab('preview'));
+
     // ── Note modal ────────────────────────────────────────────────
     function renderModalSwatches() {
         const container = document.getElementById('note-modal-colors');
@@ -376,6 +402,7 @@
         document.getElementById('note-modal-label-input').value = node.data('label') || '';
         document.getElementById('note-modal-textarea').value = node.data('note') || '';
         renderModalSwatches();
+        setNoteTab('write');
         document.getElementById('note-modal').style.display = 'flex';
         setTimeout(() => document.getElementById('note-modal-label-input').focus(), 50);
     }
