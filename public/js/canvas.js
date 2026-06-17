@@ -357,7 +357,7 @@
             gutters: [],
             hmdModeLoader: 'https://cdn.jsdelivr.net/npm/codemirror@5.65.16/'
         });
-        noteEditor.setSize(null, 260);
+        noteEditor.setSize(null, '60vh');
         return noteEditor;
     }
 

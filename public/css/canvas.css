@@ -203,9 +203,9 @@ html, body {
     background: #fff;
     border: 2px solid #000;
     border-radius: 4px;
-    width: 500px;
+    width: 920px;
     max-width: 100%;
-    max-height: 90vh;
+    max-height: 92vh;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -339,73 +339,47 @@ html, body {
     line-height: 1.5;
 }
 
-/* Color swatches */
-.color-swatches {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-top: 4px;
-}
-
-.swatch-row {
+/* Color dropdown */
+.color-select-row {
     display: flex;
     align-items: center;
     gap: 10px;
-    width: 100%;
-    padding: 6px 8px;
-    background: #fff;
-    border: 1.5px solid #ddd;
-    border-radius: 4px;
-    cursor: pointer;
-    text-align: left;
-    box-sizing: border-box;
-    transition: border-color 0.1s, background 0.1s;
+    margin-top: 4px;
 }
 
-.swatch-row:hover {
-    border-color: #999;
-    background: #fafafa;
-}
-
-.swatch-row.active {
-    border-color: #000;
-    box-shadow: 0 0 0 1px #000;
-}
-
-.swatch-dot {
-    width: 22px;
-    height: 22px;
+.color-select-dot {
+    width: 26px;
+    height: 26px;
     border: 2px solid #000;
     border-radius: 3px;
     flex-shrink: 0;
     box-sizing: border-box;
-}
-
-.swatch-dot-reset {
     background: #fff;
     color: #000;
-    font-size: 15px;
+    font-size: 16px;
     line-height: 1;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.swatch-text {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.2;
-}
-
-.swatch-name {
-    font-weight: 600;
-    font-size: 0.9rem;
+.color-select {
+    flex: 1;
+    border: 1.5px solid #000;
+    border-radius: 3px;
+    padding: 8px 12px;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 14px;
+    background: #fafafa;
     color: #111;
+    cursor: pointer;
+    box-sizing: border-box;
 }
 
-.swatch-desc {
-    font-size: 0.78rem;
-    color: #777;
+.color-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
+    background: #fff;
 }
 
 /* ---------- Mobile ---------- */
