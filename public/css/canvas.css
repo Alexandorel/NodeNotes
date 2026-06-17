@@ -301,6 +301,12 @@ html, body {
     display: none;
 }
 
+/* Align HyperMD list bullet with the item text */
+.note-modal-card .cm-s-hypermd-light span.cm-formatting-list {
+    position: relative;
+    top: 0.15em;
+}
+
 .note-modal-footer {
     display: flex;
     justify-content: flex-end;
