@@ -10,6 +10,8 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
 
     <link rel="stylesheet" href="/css/canvas.css">
+    <script src="https://unpkg.com/marked@12.0.2/marked.min.js"></script>
+    <script src="https://unpkg.com/dompurify@3.1.6/dist/purify.min.js"></script>
 </head>
 <body>
     <div class="app">
@@ -43,8 +45,15 @@
             </div>
             <label class="note-modal-label">Label</label>
             <input id="note-modal-label-input" type="text" placeholder="Node label">
-            <label class="note-modal-label">Note</label>
-            <textarea id="note-modal-textarea" placeholder="Write a note for this node..."></textarea>
+            <div class="note-modal-note-head">
+                <label class="note-modal-label">Note</label>
+                <div class="md-tabs">
+                    <button type="button" id="md-tab-write" class="md-tab active">Write</button>
+                    <button type="button" id="md-tab-preview" class="md-tab">Preview</button>
+                </div>
+            </div>
+            <textarea id="note-modal-textarea" placeholder="Write a note (Markdown supported)..."></textarea>
+            <div id="note-modal-preview" class="md-preview" style="display:none;"></div>
             <label class="note-modal-label">Color (importance)</label>
             <div id="note-modal-colors" class="color-swatches"></div>
             <div class="note-modal-footer">
