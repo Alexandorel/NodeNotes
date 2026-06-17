@@ -64,7 +64,10 @@
             <label class="note-modal-label">Note</label>
             <textarea id="note-modal-textarea" placeholder="Write a note (Markdown supported)..."></textarea>
             <label class="note-modal-label">Color (importance)</label>
-            <div id="note-modal-colors" class="color-swatches"></div>
+            <div class="color-select-row">
+                <span id="note-modal-color-dot" class="color-select-dot"></span>
+                <select id="note-modal-colors" class="color-select"></select>
+            </div>
             <div class="note-modal-footer">
                 <button id="note-modal-save">Save</button>
             </div>

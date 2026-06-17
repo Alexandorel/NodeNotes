@@ -362,29 +362,30 @@
     }
 
     // ── Note modal ────────────────────────────────────────────────
+    function updateColorDot() {
+        const dot = document.getElementById('note-modal-color-dot');
+        if (!dot) return;
+        if (activeNoteColor) {
+            dot.style.background = activeNoteColor;
+            dot.textContent = '';
+        } else {
+            dot.style.background = '#fff';
+            dot.textContent = '×';
+        }
+    }
+
     function renderModalSwatches() {
-        const container = document.getElementById('note-modal-colors');
-        const swatches = NODE_COLORS.map(c =>
-            `<button type="button" class="swatch-row${activeNoteColor === c.value ? ' active' : ''}" data-color="${c.value}">
-                <span class="swatch-dot" style="background:${c.value}"></span>
-                <span class="swatch-text">
-                    <span class="swatch-name">${c.name}</span>
-                    <span class="swatch-desc">${c.desc}</span>
-                </span>
-            </button>`
-        ).join('');
-        container.innerHTML =
-            `<button type="button" class="swatch-row swatch-reset${activeNoteColor === '' ? ' active' : ''}" data-color="">
-                <span class="swatch-dot swatch-dot-reset">&times;</span>
-                <span class="swatch-text"><span class="swatch-name">No color</span></span>
-            </button>` +
-            swatches;
-        container.querySelectorAll('.swatch-row').forEach(btn => {
-            btn.addEventListener('click', () => {
-                activeNoteColor = btn.getAttribute('data-color');
-                renderModalSwatches();
-            });
-        });
+        const select = document.getElementById('note-modal-colors');
+        const options = [{ name: 'No color', desc: '', value: '' }].concat(NODE_COLORS);
+        select.innerHTML = options.map(c => {
+            const text = c.desc ? `${c.name} — ${c.desc}` : c.name;
+            return `<option value="${c.value}"${activeNoteColor === c.value ? ' selected' : ''}>${text}</option>`;
+        }).join('');
+        updateColorDot();
+        select.onchange = () => {
+            activeNoteColor = select.value;
+            updateColorDot();
+        };
     }
 
     function openNoteModal(node) {
