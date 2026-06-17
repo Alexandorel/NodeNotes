@@ -436,7 +436,6 @@
             return;
         }
         if (evt.target.isNode && evt.target.isNode()) {
-            // A connection is being created: this tap picks the target node
             if (pendingEdgeSource) {
                 if (!pendingEdgeSource.same(evt.target)) {
                     connectNodes(pendingEdgeSource, evt.target);
@@ -448,8 +447,6 @@
             if (shift) {
                 setEdgeSource(evt.target);
             }
-            // single tap (no shift): just selects the node;
-            // double-click opens the editor (see dbltap below)
         }
     });
 

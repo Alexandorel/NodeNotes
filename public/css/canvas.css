@@ -307,6 +307,20 @@ html, body {
     top: 0.15em;
 }
 
+
+.note-modal-card .cm-s-hypermd-light span.cm-formatting-list-ul {
+    font-size: 0;
+
+    position: relative;
+    top: 4px;
+}
+.note-modal-card .cm-s-hypermd-light span.cm-formatting-list-ul::before {
+    content: "•";
+    font-size: 14px;
+    color: #111;
+    padding-right: 0.4em;
+}
+
 .note-modal-footer {
     display: flex;
     justify-content: flex-end;
