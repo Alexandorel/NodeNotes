@@ -282,6 +282,31 @@ html, body {
     background: #fff;
 }
 
+/* HyperMD note editor inside the modal */
+.note-modal-card .CodeMirror {
+    border: 1.5px solid #000;
+    border-radius: 3px;
+    background: #fff;
+    color: #111;
+    font-size: 14px;
+}
+
+.note-modal-card .CodeMirror-focused {
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
+}
+
+/* keep the raw textarea hidden once HyperMD takes over */
+.note-modal-card .CodeMirror + textarea,
+.note-modal-card textarea.CodeMirror-replaced {
+    display: none;
+}
+
+/* Align HyperMD list bullet with the item text */
+.note-modal-card .cm-s-hypermd-light span.cm-formatting-list {
+    position: relative;
+    top: 0.15em;
+}
+
 .note-modal-footer {
     display: flex;
     justify-content: flex-end;

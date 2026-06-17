@@ -344,6 +344,23 @@
     function escapeAttr(s) { return String(s).replace(/"/g, '&quot;'); }
     function escapeText(s) { return String(s).replace(/</g, '&lt;'); }
 
+    // ── Note modal: HyperMD live-preview editor ───────────────────
+    let noteEditor = null;
+
+    function ensureNoteEditor() {
+        if (noteEditor) return noteEditor;
+        if (typeof HyperMD === 'undefined') return null; // libs failed: keep plain textarea
+        const ta = document.getElementById('note-modal-textarea');
+        noteEditor = HyperMD.fromTextArea(ta, {
+            lineNumbers: false,
+            foldGutter: false,
+            gutters: [],
+            hmdModeLoader: 'https://cdn.jsdelivr.net/npm/codemirror@5.65.16/'
+        });
+        noteEditor.setSize(null, 260);
+        return noteEditor;
+    }
+
     // ── Note modal ────────────────────────────────────────────────
     function renderModalSwatches() {
         const container = document.getElementById('note-modal-colors');
@@ -374,9 +391,15 @@
         activeNoteNode = node;
         activeNoteColor = node.data('color') || '';
         document.getElementById('note-modal-label-input').value = node.data('label') || '';
-        document.getElementById('note-modal-textarea').value = node.data('note') || '';
         renderModalSwatches();
         document.getElementById('note-modal').style.display = 'flex';
+        const ed = ensureNoteEditor();
+        if (ed) {
+            ed.setValue(node.data('note') || '');
+            setTimeout(() => ed.refresh(), 50);   // remeasure now that the modal is visible
+        } else {
+            document.getElementById('note-modal-textarea').value = node.data('note') || '';
+        }
         setTimeout(() => document.getElementById('note-modal-label-input').focus(), 50);
     }
 
@@ -388,7 +411,7 @@
     function saveNoteModal() {
         if (!activeNoteNode) return;
         const label = document.getElementById('note-modal-label-input').value;
-        const note = document.getElementById('note-modal-textarea').value;
+        const note = noteEditor ? noteEditor.getValue() : document.getElementById('note-modal-textarea').value;
         if (label.trim()) activeNoteNode.data('label', label);
         activeNoteNode.data('note', note);
         activeNoteNode.data('hasNote', note ? 'true' : 'false');
