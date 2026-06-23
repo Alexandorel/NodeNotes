@@ -503,6 +503,64 @@
     document.getElementById('btn-save').addEventListener('click', saveNow);
     document.getElementById('btn-fit').addEventListener('click', () => cy.fit(undefined, 50));
 
+    // ── Export all node text for an AI agent ──────────────────────
+    function colorName(value) {
+        const c = NODE_COLORS.find(c => c.value === value);
+        return c ? c.name : '';
+    }
+
+    function buildNotesText() {
+        const lines = [];
+        lines.push('# ' + (fileNameInput.value.trim() || 'Untitled file'));
+        lines.push('');
+
+        cy.nodes().forEach(n => {
+            const label = (n.data('label') || '').trim();
+            const note = (n.data('note') || '').trim();
+            if (!label && !note) return;
+            const tag = colorName(n.data('color'));
+            lines.push('## ' + (label || 'Untitled node') + (tag ? ` (${tag})` : ''));
+            if (note) lines.push(note);
+            lines.push('');
+        });
+
+        const edges = cy.edges();
+        if (edges.length > 0) {
+            lines.push('## Connections');
+            edges.forEach(e => {
+                const src = cy.getElementById(e.data('source')).data('label') || e.data('source');
+                const tgt = cy.getElementById(e.data('target')).data('label') || e.data('target');
+                lines.push(`- ${src} -> ${tgt}`);
+            });
+            lines.push('');
+        }
+
+        return lines.join('\n').trim() + '\n';
+    }
+
+    async function copyNotesText() {
+        const text = buildNotesText();
+        const prev = saveStatus.textContent;
+        try {
+            await navigator.clipboard.writeText(text);
+            saveStatus.textContent = 'Copied for AI';
+        } catch (err) {
+            // Fallback for browsers/contexts without the async clipboard API
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            const ok = document.execCommand('copy');
+            document.body.removeChild(ta);
+            saveStatus.textContent = ok ? 'Copied for AI' : 'Copy failed';
+        }
+        setTimeout(() => { saveStatus.textContent = dirty ? 'Unsaved...' : (prev || 'Saved'); }, 1500);
+    }
+
+    document.getElementById('btn-export-text').addEventListener('click', copyNotesText);
+
     window.addEventListener('beforeunload', (e) => {
         if (dirty) { e.preventDefault(); e.returnValue = ''; }
     });
