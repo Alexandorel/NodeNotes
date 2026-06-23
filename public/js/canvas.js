@@ -543,7 +543,7 @@
         const prev = saveStatus.textContent;
         try {
             await navigator.clipboard.writeText(text);
-            saveStatus.textContent = 'Copied for AI';
+            saveStatus.textContent = 'Notes copied';
         } catch (err) {
             // Fallback for browsers/contexts without the async clipboard API
             const ta = document.createElement('textarea');
